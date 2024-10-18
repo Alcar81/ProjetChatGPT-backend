@@ -2,14 +2,11 @@
 
 'use strict';
 const { Model } = require('sequelize');
+const bcrypt = require('bcrypt');
+const { isEmail } = require('validator');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       // define association here
     }
@@ -37,6 +34,24 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'User',
   });
+
+  // Hachage du mot de passe avant la création
+  User.beforeCreate(async (user) => {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+  });
+
+  // Validation de l'email
+  User.beforeValidate((user) => {
+    if (!isEmail(user.email)) {
+      throw new Error('Email invalide.');
+    }
+  });
+
+  // Méthode pour comparer le mot de passe
+  User.prototype.comparePassword = async function (password) {
+    return await bcrypt.compare(password, this.password);
+  };
 
   return User;
 };
