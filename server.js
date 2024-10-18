@@ -1,5 +1,4 @@
 // backend/server.js
-
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
@@ -7,17 +6,16 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { Sequelize } = require('sequelize');
 const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth'); // Importation des routes d'authentification
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors({
-    origin: process.env.FRONTEND_URL, // Autoriser uniquement le frontend
-    credentials: true, // Si vous utilisez des cookies ou l'authentification
-}));
+app.use(cors());
 app.use(bodyParser.json());
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes); // Utilisation des routes d'authentification
 
 // Sécurisation avec HTTPS
 const privateKey = fs.readFileSync(process.env.SSL_PRIVATE_KEY_PATH, 'utf8');

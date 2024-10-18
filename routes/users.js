@@ -1,10 +1,9 @@
 // backend/routes/users.js
-
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { User } = require('../models'); // Ajustez le chemin d'importation si nécessaire
+const { User } = require('../models'); // Assurez-vous que ce chemin est correct
 const router = express.Router();
-const { authenticateJWT } = require('../middleware/auth'); // Importation du middleware d'authentification
+const { authenticateJWT } = require('../middleware/auth'); // Importer le middleware d'authentification
 
 // Fonction pour exclure le mot de passe des réponses
 const excludePassword = (user) => {
