@@ -1,21 +1,26 @@
 // backend/routes/users.js
-const express = require('express');
-const router = express.Router();
-const { User } = require('../models');
 
-// Obtenir tous les utilisateurs
-router.get('/', async (req, res) => {
-    try {
-        const users = await User.findAll();
-        res.json(users);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs.' });
-    }
-});
+const express = require('express');
+const bcrypt = require('bcrypt');
+const { User } = require('../models'); // Ajustez le chemin d'importation si nécessaire
+const router = express.Router();
+const { authenticateJWT } = require('../middleware/auth'); // Importation du middleware d'authentification
+
+// Fonction pour exclure le mot de passe des réponses
+const excludePassword = (user) => {
+    const { password, ...userWithoutPassword } = user; // Exclure le mot de passe
+    return userWithoutPassword;
+};
 
 // Ajouter un utilisateur
 router.post('/', async (req, res) => {
+    console.log(req.body); // Log des données reçues
+
+    // Vérifiez si req.body est un objet
+    if (typeof req.body !== 'object' || Array.isArray(req.body)) {
+        return res.status(400).json({ message: 'Le corps de la requête doit être un objet JSON valide.' });
+    }
+
     const { firstName, lastName, email, password } = req.body;
 
     // Validation des données
@@ -24,18 +29,31 @@ router.post('/', async (req, res) => {
     }
 
     try {
+        // Hashage du mot de passe avant la création
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         // Créer un nouvel utilisateur
-        const newUser = await User.create({ firstName, lastName, email, password });
-        res.status(201).json(newUser);
+        const newUser = await User.create({ firstName, lastName, email, password: hashedPassword });
+        res.status(201).json(excludePassword(newUser)); // Exclure le mot de passe de la réponse
     } catch (error) {
         console.error(error);
         if (error.name === 'SequelizeUniqueConstraintError') {
             return res.status(400).json({ message: 'L\'email doit être unique.' });
         }
-        res.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur.' });
+        res.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur.', details: error.message });
     }
 });
 
-// Autres routes (par exemple, pour modifier ou supprimer un utilisateur)
+// Obtenir tous les utilisateurs avec authentification
+router.get('/', authenticateJWT, async (req, res) => {
+    try {
+        const users = await User.findAll();
+        res.json(users.map(excludePassword)); // Exclure le mot de passe de chaque utilisateur
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs.', details: error.message });
+    }
+});
 
 module.exports = router;

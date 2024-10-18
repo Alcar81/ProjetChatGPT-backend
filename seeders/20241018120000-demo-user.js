@@ -1,4 +1,4 @@
-// backend/seeders/20241018120000-demo-user.js
+// C:\projetChatGPT\backend\seeders\20241018120000-demo-user.js
 
 'use strict';
 

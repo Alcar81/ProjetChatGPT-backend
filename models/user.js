@@ -16,19 +16,34 @@ module.exports = (sequelize, DataTypes) => {
     firstName: {
       type: DataTypes.STRING,
       allowNull: false, // Champ requis
+      validate: {
+        notEmpty: true, // Ne doit pas être vide
+        len: [2, 30], // Longueur minimale et maximale
+      },
     },
     lastName: {
       type: DataTypes.STRING,
       allowNull: false, // Champ requis
+      validate: {
+        notEmpty: true,
+        len: [2, 30],
+      },
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true, // Doit être unique
+      validate: {
+        isEmail: true, // Vérification de l'email
+      },
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: true,
+        len: [6, 100], // Longueur minimale du mot de passe
+      },
     },
   }, {
     sequelize,

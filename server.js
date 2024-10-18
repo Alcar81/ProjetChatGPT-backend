@@ -1,32 +1,50 @@
 // backend/server.js
 
-require('dotenv').config(); // Charger les variables d'environnement
 const express = require('express');
-const cors = require('cors'); // Importer CORS
-const { sequelize } = require('./models'); // Importer Sequelize si nécessaire
-const app = express();
+const https = require('https');
+const fs = require('fs');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const { Sequelize } = require('sequelize');
 const userRoutes = require('./routes/users');
 
-// Middleware
-app.use(cors()); // Activer CORS
-app.use(express.json()); // Pour analyser les corps de requête JSON
-
-// Routes
-app.use('/api/users', userRoutes); // Pour utiliser les routes des utilisateurs
-
-// Synchroniser les modèles avec la base de données
-sequelize.sync()
-    .then(() => console.log('Database synced'))
-    .catch(err => console.error('Error syncing database: ', err));
-
-// Démarrer le serveur
+const app = express();
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+
+// Middleware
+app.use(cors({
+    origin: process.env.FRONTEND_URL, // Autoriser uniquement le frontend
+    credentials: true, // Si vous utilisez des cookies ou l'authentification
+}));
+app.use(bodyParser.json());
+app.use('/api/users', userRoutes);
+
+// Sécurisation avec HTTPS
+const privateKey = fs.readFileSync(process.env.SSL_PRIVATE_KEY_PATH, 'utf8');
+const certificate = fs.readFileSync(process.env.SSL_CERTIFICATE_PATH, 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(PORT, () => {
+    console.log(`Le serveur fonctionne en toute sécurité sur le port ${PORT}`);
 });
 
-// Middleware de gestion des erreurs
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
+// Initialisation de la base de données
+const sequelize = new Sequelize(process.env.DB_DEV, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
+    dialect: 'mysql', // ou 'postgres', 'sqlite', etc. selon votre base de données
 });
+
+// Synchronisation de la base de données
+sequelize.authenticate()
+    .then(() => {
+        console.log('Connexion à la base de données réussie.');
+        return sequelize.sync(); // Synchronisation des modèles
+    })
+    .then(() => {
+        console.log('Base de données synchronisée.');
+    })
+    .catch(error => {
+        console.error('Impossible de se connecter à la base de données :', error);
+    });

@@ -1,5 +1,3 @@
-# C:\projetChatGPT\backend\.gitignore
-
 # Ignorer le fichier de configuration des variables d'environnement
 .env
 
@@ -13,3 +11,32 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Ignorer les fichiers de compilation TypeScript (si vous utilisez TypeScript)
+*.tsbuildinfo
+*.js
+*.d.ts
+
+# Ignorer les dossiers de build (par exemple, si vous avez un dossier dist ou build)
+dist/
+build/
+
+# Ignorer les fichiers de configuration de l'éditeur (ex: VS Code)
+.vscode/
+
+# Ignorer les fichiers de configuration de l'IDE (ex: JetBrains)
+.idea/
+
+# Ignorer les fichiers de configuration de l'environnement
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignorer les fichiers temporaires
+*.tmp
+*.temp
+
+# Ignorer les fichiers de sauvegarde
+*~ 
+*.bak
