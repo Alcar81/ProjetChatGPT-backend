@@ -1,4 +1,3 @@
-// backend/server.js
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
@@ -6,16 +5,20 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { Sequelize } = require('sequelize');
 const userRoutes = require('./routes/users');
-const authRoutes = require('./routes/auth'); // Importation des routes d'authentification
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: 'https://localhost:3000',
+  credentials: true, // Permettre l'envoi des cookies si nécessaire
+};
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use('/api/users', userRoutes);
-app.use('/api/auth', authRoutes); // Utilisation des routes d'authentification
+app.use('/api/auth', authRoutes);
 
 // Sécurisation avec HTTPS
 const privateKey = fs.readFileSync(process.env.SSL_PRIVATE_KEY_PATH, 'utf8');
@@ -31,7 +34,7 @@ httpsServer.listen(PORT, () => {
 // Initialisation de la base de données
 const sequelize = new Sequelize(process.env.DB_DEV, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
-    dialect: 'mysql', // ou 'postgres', 'sqlite', etc. selon votre base de données
+    dialect: 'mysql',
 });
 
 // Synchronisation de la base de données
