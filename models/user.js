@@ -15,15 +15,15 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     firstName: {
       type: DataTypes.STRING,
-      allowNull: false, // Champ requis
+      allowNull: false,
       validate: {
-        notEmpty: true, // Ne doit pas être vide
-        len: [2, 30], // Longueur minimale et maximale
+        notEmpty: true,
+        len: [2, 30],
       },
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: false, // Champ requis
+      allowNull: false,
       validate: {
         notEmpty: true,
         len: [2, 30],
@@ -32,9 +32,9 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true, // Doit être unique
+      unique: true,
       validate: {
-        isEmail: true, // Vérification de l'email
+        isEmail: true,
       },
     },
     password: {
@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [6, 100], // Longueur minimale du mot de passe
+        len: [6, 100],
       },
     },
   }, {

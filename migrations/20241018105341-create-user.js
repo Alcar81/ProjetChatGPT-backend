@@ -1,4 +1,4 @@
-// backend/migrations/20241018105341-create-user.js
+// C:\projetChatGPT\backend\migrations\20241018105341-create-user.js
 
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
