@@ -40,3 +40,7 @@ build/
 # Ignorer les fichiers de sauvegarde
 *~ 
 *.bak
+
+# Ignorer les fichiers de certificats
+backend/certificates/*.pem
+frontend/certs/*.pem
