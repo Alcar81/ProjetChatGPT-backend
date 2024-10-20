@@ -1,4 +1,5 @@
-// backend/routes/users.js
+/* backend/routes/users.js */
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { User } = require('../models'); // Assurez-vous que ce chemin est correct

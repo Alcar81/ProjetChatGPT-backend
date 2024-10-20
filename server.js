@@ -1,3 +1,5 @@
+// C:\projetChatGPT\backend\server.js
+
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
@@ -14,6 +16,7 @@ const PORT = process.env.PORT || 3001;
 const corsOptions = {
   origin: 'https://localhost:3000',
   credentials: true, // Permettre l'envoi des cookies si nécessaire
+  allowedHeaders: ['Authorization', 'Content-Type'], // Ajouter l'en-tête Authorization
 };
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
