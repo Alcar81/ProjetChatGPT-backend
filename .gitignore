@@ -42,5 +42,5 @@ build/
 *.bak
 
 # Ignorer les fichiers de certificats
-certificates/*.pem
-cert/*.pem
+certificates/
+*.pem
