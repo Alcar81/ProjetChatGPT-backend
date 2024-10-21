@@ -1,4 +1,4 @@
-// C:\projetChatGPT\backend\server.js
+// backend/server.js
 
 const express = require('express');
 const https = require('https');
@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 const corsOptions = {
-  origin: 'https://localhost:3000',
+  origin: ['http://localhost:3000', 'https://localhost:3000'], // Accepter les requêtes des deux origines
   credentials: true, // Permettre l'envoi des cookies si nécessaire
   allowedHeaders: ['Authorization', 'Content-Type'], // Ajouter l'en-tête Authorization
 };
@@ -22,6 +22,9 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+
+// Ajouter une route pour servir le fichier de validation
+app.use('/.well-known/pki-validation', express.static('.well-known/pki-validation'));
 
 // Sécurisation avec HTTPS
 const privateKey = fs.readFileSync(process.env.SSL_PRIVATE_KEY_PATH, 'utf8');
